@@ -15,17 +15,20 @@ namespace tasktree {
 			std::string name;
 			time_t creation_time;
 			sqlite3_int64 id;
-			Task& parent;
+			Task* parent;
 			std::vector<std::unique_ptr<Task>> children;
 
 			//constructor that sets all vars to their respective values
-			Task(const std::string& name, time_t creation_time, sqlite3_int64 id, Task* parent);
+			Task(const std::string& name, time_t creation_time, sqlite3_int64 id, Task* parent) noexcept;
+
+			//same as other constructor but uses current time as creation_time
+			Task(const std::string& name, sqlite3_int64 id, Task* parent) noexcept;
 
 			//changes name variable
-			void set_name(const std::string& name);
+			void set_name(const std::string& name) noexcept;
 
 			//changes parent variable
-			void set_parent(Task* parent);
+			void set_parent(Task* parent) noexcept;
 
 			//adds a child task and returns a reference to it
 			Task& add_child(Task child);
@@ -45,7 +48,7 @@ namespace tasktree {
 			time_t get_creation_time() const noexcept { return creation_time; }
 
 			//returns number of children
-			size_t get_child_count() const { return children.size(); }
+			size_t get_child_count() const noexcept { return children.size(); }
 
 			//returns reference to child at index i
 			const Task& get_child(int i) const;
@@ -57,15 +60,16 @@ namespace tasktree {
 			Task head;
 
 		public:
+			//initialize tasktree and load database at path
 			explicit TaskTree(const char* path);
 
 			//add child with name to parent, updating db
 			const Task& add_child(Task& parent, const std::string& name);
 
-			//get head task
-			const Task& get_head();
-
 			//remove task from database and memory
 			void remove(Task& task);
+
+			//get head task
+			const Task& get_head() const noexcept { return head; }
 	};
 }

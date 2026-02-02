@@ -2,7 +2,8 @@
 #include <vector>
 #include <ctime>
 #include <filesystem>
-#include "sqlite3.h"
+#include <exception>
+#include "tasktree.hpp"
 
 using namespace std;
 
@@ -18,13 +19,24 @@ const string DATA_DIR = string(getenv("HOME")) + "/.local/share/tasktree";
 
 string get_db_dir() {
 	filesystem::create_directories(DATA_DIR);
-	return DATA_DIR + "tasktree.db";
+	return DATA_DIR + SLASH + "tasktree.db";
 }
 
 static sqlite3 *db;
 
 int main() {
-	cout << get_db_dir() << endl;
-	//sqlite3_open(get_db_dir().c_str(), &db);
-	//sqlite3_close(db);
+	try {
+		cout << get_db_dir() << endl;
+		tasktree::TaskTree tree(get_db_dir().c_str());
+		cout << tree.get_head().get_creation_time() << endl;
+		return 0;
+	}
+	catch(exception& e) {
+		cout << e.what() << endl;
+		return 1;
+	}
+	catch(...) {
+		cout << "unknown error occured" << endl;
+		return 1;
+	}
 }

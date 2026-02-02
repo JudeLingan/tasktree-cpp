@@ -8,3 +8,7 @@ target_sources(Tasktreelib
 		FILES
 			tasktree.hpp
 )
+
+target_link_libraries(Tasktreelib
+	PRIVATE unofficial::sqlite3::sqlite3
+)
