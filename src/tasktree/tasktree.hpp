@@ -15,7 +15,7 @@ namespace tasktree {
 			std::string name;
 			time_t creation_time;
 			sqlite3_int64 id;
-			Task* parent;
+			Task& parent;
 			std::vector<std::unique_ptr<Task>> children;
 
 			//constructor that sets all vars to their respective values
@@ -45,7 +45,7 @@ namespace tasktree {
 			time_t get_creation_time() const noexcept { return creation_time; }
 
 			//returns number of children
-			int get_child_count() const { return children.size(); }
+			size_t get_child_count() const { return children.size(); }
 
 			//returns reference to child at index i
 			const Task& get_child(int i) const;
