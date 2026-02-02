@@ -60,7 +60,10 @@ namespace tasktree {
 			explicit TaskTree(const char* path);
 
 			//add child with name to parent, updating db
-			Task& add_child(Task& parent, const std::string& name);
+			const Task& add_child(Task& parent, const std::string& name);
+
+			//get head task
+			const Task& get_head();
 
 			//remove task from database and memory
 			void remove(Task& task);
