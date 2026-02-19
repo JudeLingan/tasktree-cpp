@@ -56,7 +56,6 @@ namespace tasktree {
 				name = raw_name;
 			}
 
-			cout << std::to_string(sqlite3_column_int64(stmt.get(), column_ids.at("id"))) << endl;
 			parent.add_child(Task(
 						name,
 						(time_t)sqlite3_column_int64(stmt.get(), column_ids.at("creation_time")),
@@ -73,7 +72,6 @@ namespace tasktree {
 
 	// --- public interface ---
 	Task& TaskTree::add_child(Task& parent, const std::string& name) {
-		cout << "insertion" << endl;
 		UniqueSqliteStmt stmt(db.get(), "INSERT INTO tasks (parent, creation_time, name) VALUES (?, ?, ?)");
 		time_t creation_time = chrono::system_clock::to_time_t(chrono::system_clock::now());
 
