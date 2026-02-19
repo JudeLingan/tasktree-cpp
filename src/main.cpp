@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <ctime>
 #include <filesystem>
 #include <exception>
 #include "tasktree.hpp"
@@ -26,9 +24,7 @@ static sqlite3 *db;
 
 int main() {
 	try {
-		cout << get_db_dir() << endl;
 		tasktree::TaskTree tree(get_db_dir().c_str());
-		cout << tree.get_head().get_creation_time() << endl;
 		return 0;
 	}
 	catch(exception& e) {

@@ -36,13 +36,15 @@ namespace tasktree {
 			//initialize tasktree and load database at path
 			explicit TaskTree(const std::string& path);
 
+			//get head task
+			Task& get_head() noexcept { return head; }
+
 			//add child with name to parent, updating db
 			Task& add_child(Task& parent, const std::string& name);
 
 			//remove task from database and memory
 			void remove(Task& task);
 
-			//get head task
-			Task& get_head() noexcept { return head; }
+			void complete(Task&);
 	};
 }

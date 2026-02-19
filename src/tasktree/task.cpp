@@ -20,11 +20,11 @@ namespace tasktree {
 
 	Task& Task::add_child(Task child) {
 		children.push_back(child);
-		return children.at(children.size() - 1);
+		children.back().parent = this;
+		return children.back();
 	}
 
 	void Task::remove_child(int i) {
 		children.erase(children.begin() + i);
 	}
 }
-using sys_clock = chrono::system_clock;
