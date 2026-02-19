@@ -1,3 +1,14 @@
+add_library(Task)
+
+target_sources(Task
+	PRIVATE
+		task.cpp
+	PUBLIC
+		FILE_SET HEADERS
+		FILES
+			task.hpp
+)
+
 add_library(Tasktreelib)
 
 target_sources(Tasktreelib
@@ -10,5 +21,6 @@ target_sources(Tasktreelib
 )
 
 target_link_libraries(Tasktreelib
-	PRIVATE unofficial::sqlite3::sqlite3
+	PRIVATE Task
+	PRIVATE DatabaseUniqueSqlite
 )

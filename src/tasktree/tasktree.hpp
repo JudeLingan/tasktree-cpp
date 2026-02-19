@@ -1,75 +1,48 @@
 #pragma once
 
-#include <memory>
-#include <sqlite3.h>
 #include <string>
-#include <vector>
+#include <unordered_map>
+#include <sqlite3.h>
+#include "unique-sqlite.hpp"
+#include "task.hpp"
 
 namespace tasktree {
-	class TaskTree;
-
-	class Task {
-		private:
-			friend class TaskTree;
-
-			std::string name;
-			time_t creation_time;
-			sqlite3_int64 id;
-			Task* parent;
-			std::vector<std::unique_ptr<Task>> children;
-
-			//constructor that sets all vars to their respective values
-			Task(const std::string& name, time_t creation_time, sqlite3_int64 id, Task* parent) noexcept;
-
-			//same as other constructor but uses current time as creation_time
-			Task(const std::string& name, sqlite3_int64 id, Task* parent) noexcept;
-
-			//changes name variable
-			void set_name(const std::string& name) noexcept;
-
-			//changes parent variable
-			void set_parent(Task* parent) noexcept;
-
-			//adds a child task and returns a reference to it
-			Task& add_child(Task child);
-
-			//removes a child task
-			void remove_child(int i);
-
-		public:
-
-			//returns name
-			std::string get_name() const noexcept { return name; }
-
-			//returns id
-			sqlite3_int64 get_id() const noexcept { return id; }
-
-			//returns creation_time
-			time_t get_creation_time() const noexcept { return creation_time; }
-
-			//returns number of children
-			size_t get_child_count() const noexcept { return children.size(); }
-
-			//returns reference to child at index i
-			const Task& get_child(int i) const;
-	};
-
 	class TaskTree {
 		private:
-			std::unique_ptr<sqlite3, decltype(&sqlite3_close)> db;
-			Task head;
+			// --- private variables ---
+
+			Task head = Task();
+			database::UniqueSqlite db;        
+			std::unordered_map<std::string, sqlite3_int64> column_ids = {}; //contains pairs of columns and int ids
+			std::vector<std::string> column_names = {"id", "parent", "name", "creation time"}; //
+
+			// --- tree functions ---
+
+			//load all of a task's children into memory
+			void load_child_tasks(Task& parent);
+
+			// --- database functions ---
+
+			//get column id or return -1 if it doesn't exist
+			sqlite3_int64 column_id(std::string name) noexcept { return column_ids.count(name) ? column_ids.at(name) : -1; }
+
+			//prints a vector string containing all column names
+			std::vector<std::string> get_column_names() const noexcept;
 
 		public:
+
+			// --- public interface ---
+
 			//initialize tasktree and load database at path
-			explicit TaskTree(const char* path);
+			explicit TaskTree(const std::string& path);
 
 			//add child with name to parent, updating db
-			const Task& add_child(Task& parent, const std::string& name);
+			Task& add_child(Task& parent, const std::string& name);
 
 			//remove task from database and memory
 			void remove(Task& task);
 
 			//get head task
-			const Task& get_head() const noexcept { return head; }
+			Task& get_head() noexcept { return head; }
 	};
 }
