@@ -1,4 +1,3 @@
-#include <iostream>
 #include <chrono>
 #include <stdexcept>
 #include <sqlite3.h>
@@ -12,19 +11,14 @@ using namespace database;
 namespace tasktree {
 
 #define THROW_SQL_ERROR throw runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__) + ":" + std::string(sqlite3_errmsg(db.get())));
-#define HANDLE_SQL_ERROR(func) if((func) != SQLITE_OK) THROW_SQL_ERROR
 
 	// --- constructors ---
 
-	TaskTree::TaskTree(const string& path) {
-		//set db
-		sqlite3* raw_db;
-		HANDLE_SQL_ERROR(sqlite3_open(path.c_str(), &raw_db))
-		db.reset(raw_db);
-
+	TaskTree::TaskTree(const string& path) :
+		db(path) {
 		//create table if not exists
 		string sql_tablegen = "CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY NOT NULL CHECK (id != 0), parent INTEGER NOT NULL, creation_time INTEGER NOT NULL, completed INTEGER NOT NULL DEFAULT 0, name TEXT)";
-		HANDLE_SQL_ERROR(sqlite3_exec(db.get(), sql_tablegen.c_str(), nullptr, nullptr, nullptr));
+		db.exec(sql_tablegen, nullptr, nullptr);
 		
 		//load all column names and ids
 		UniqueSqliteStmt stmt(db.get(), "PRAGMA table_info(tasks)");
@@ -43,9 +37,9 @@ namespace tasktree {
 	void TaskTree::load_child_tasks(Task& parent) {
 		UniqueSqliteStmt stmt(db.get(), "SELECT * FROM tasks WHERE parent = ?");
 
-		HANDLE_SQL_ERROR(sqlite3_bind_int64(stmt.get(), 1, parent.id))
+		stmt.bind(1, parent.id);
 
-		int err = sqlite3_step(stmt.get());
+		int err = stmt.step();
 
 		//load all tasks from the database
 		while(err == SQLITE_ROW) {
@@ -63,7 +57,7 @@ namespace tasktree {
 						&parent
 			));
 
-			err = sqlite3_step(stmt.get());
+			err = stmt.step();
 		}
 
 		//throw error if sqlite fails
@@ -75,9 +69,9 @@ namespace tasktree {
 		UniqueSqliteStmt stmt(db.get(), "INSERT INTO tasks (parent, creation_time, name) VALUES (?, ?, ?)");
 		time_t creation_time = chrono::system_clock::to_time_t(chrono::system_clock::now());
 
-		HANDLE_SQL_ERROR(sqlite3_bind_int64(stmt.get(), 1, parent.id));
-		HANDLE_SQL_ERROR(sqlite3_bind_int64(stmt.get(), 2, creation_time));
-		HANDLE_SQL_ERROR(sqlite3_bind_text(stmt.get(), 3, name.c_str(), -1, SQLITE_TRANSIENT));
+		stmt.bind(1, parent.id);
+		stmt.bind(2, (sqlite3_int64)creation_time);
+		stmt.bind(3, name);
 
 		int rc = sqlite3_step(stmt.get());
 		if (rc != SQLITE_DONE && rc != SQLITE_ROW) THROW_SQL_ERROR;
