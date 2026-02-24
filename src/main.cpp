@@ -23,16 +23,6 @@ string get_db_dir() {
 static sqlite3 *db;
 
 int main() {
-	try {
-		tasktree::TaskTree tree(get_db_dir().c_str());
-		return 0;
-	}
-	catch(exception& e) {
-		cout << e.what() << endl;
-		return 1;
-	}
-	catch(...) {
-		cout << "unknown error occured" << endl;
-		return 1;
-	}
+	tasktree::TaskTree tree(get_db_dir().c_str());
+	return 0;
 }
