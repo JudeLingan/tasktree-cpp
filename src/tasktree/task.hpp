@@ -51,7 +51,7 @@ namespace tasktree {
 			Task& get_parent() const noexcept { return *parent; };
 
 			//returns reference to child at index i
-			Task& get_child(int i) const;
+			Task& get_child(int i) { return children.at(i); };
 
 	};
 }
