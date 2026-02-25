@@ -53,5 +53,7 @@ namespace tasktree {
 			//returns reference to child at index i
 			Task& get_child(int i) { return children.at(i); };
 
+			//returns first child with this id or nullptr if not found
+			Task* get_child_by_id(sqlite3_int64 id);
 	};
 }

@@ -113,13 +113,7 @@ namespace tasktree {
 	Task* TaskTree::get_by_id(sqlite3_int64 id) {
 		tasktree::Task& task = get_head();
 
-		for (int i = 0; i < get_head().get_child_count(); ++i) {
-			if (task.get_child(i).get_id() == id) {
-				return &task.get_child(i);
-			}
-		}
-
-		return nullptr;
+		return head.get_child_by_id(id);
 	}
 
 # undef THROW_SQL_ERROR

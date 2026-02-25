@@ -27,4 +27,13 @@ namespace tasktree {
 	void Task::remove_child(int i) {
 		children.erase(children.begin() + i);
 	}
-}
+
+	Task* Task::get_child_by_id(sqlite3_int64 id) {
+		for (int i = 0; i < get_child_count(); ++i) {
+			if (get_child(i).get_id() == id) {
+				return &get_child(i);
+			}
+		}
+		return nullptr;
+	}
+} // namespace tasktree
