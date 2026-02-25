@@ -87,8 +87,16 @@ namespace tasktree {
 	}
 
 	void TaskTree::remove(Task& task) {
+		if (task.parent == nullptr) {
+			throw runtime_error("parent cannot be null. are you trying to remove the root task?");
+		}
+
+		for (int i = 0; i < task.parent->get_child_count(); ++i) {
+			if (task.parent->get_child(i).get_id() == task.get_id()) {
+				task.parent->children.erase(task.parent->children.begin() + i);
+			}
+		}
 	}
 
 # undef HANDLE_SQL_ERROR
-
 }
