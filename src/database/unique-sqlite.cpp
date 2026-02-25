@@ -55,21 +55,21 @@ namespace database {
 #define THROW_SQL_ERROR throw runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__) + ":" + std::string(sqlite3_errmsg(db)));
 #define USQLITE_DO(func) assert(db != nullptr); if((func) != SQLITE_OK) THROW_SQL_ERROR
 
-	void bind_check(int index, UniqueSqliteStmt& stmt) {
+	void bind_check(int index, const UniqueSqliteStmt& stmt) {
 		if (index < 1) {
 			throw out_of_range("index must be at least 1");
 		}
-		if (index > sqlite3_column_count(stmt.get())) {
-			throw out_of_range("index must be less than or equal to column count");
+		if (index > sqlite3_bind_parameter_count(stmt.get())) {
+			throw out_of_range("index must be less than or equal to number of parameters: " + to_string(sqlite3_column_count(stmt.get())));
 		}
 	}
 
-	void column_check(int index, UniqueSqliteStmt& stmt) {
+	void column_check(int index, const UniqueSqliteStmt& stmt) {
 		if (index < 0) {
 			throw out_of_range("index must be at least 0");
 		}
 		if (index >= sqlite3_column_count(stmt.get())) {
-			throw out_of_range("index must be less than column count");
+			throw out_of_range("index must be less than column count: " + to_string(sqlite3_column_count(stmt.get())));
 		}
 	}
 

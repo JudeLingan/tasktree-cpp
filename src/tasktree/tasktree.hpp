@@ -45,6 +45,14 @@ namespace tasktree {
 			//remove task from database and memory
 			void remove(Task& task);
 
+			//mark task as complete in database
 			void complete(Task&);
+
+			//print all child tasks
+            void print();
+
+                        //get first task loaded into memory with this id
+			//returns null if not found
+			Task* get_by_id(sqlite3_int64 id);
 	};
 }

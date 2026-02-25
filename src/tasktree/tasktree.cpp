@@ -1,4 +1,5 @@
 #include <chrono>
+#include <iostream>
 #include <stdexcept>
 #include <sqlite3.h>
 #include "tasktree.hpp"
@@ -14,12 +15,11 @@ namespace tasktree {
 
 	// --- constructors ---
 
-	TaskTree::TaskTree(const string& path) :
-		db(path) {
+	TaskTree::TaskTree(const string& path) : db(path) {
 		//create table if not exists
 		string sql_tablegen = "CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY NOT NULL CHECK (id != 0), parent INTEGER NOT NULL, creation_time INTEGER NOT NULL, completed INTEGER NOT NULL DEFAULT 0, name TEXT)";
 		db.exec(sql_tablegen, nullptr, nullptr);
-		
+
 		//load all column names and ids
 		UniqueSqliteStmt stmt(db.get(), "PRAGMA table_info(tasks)");
 		int rc = stmt.step();
@@ -55,7 +55,7 @@ namespace tasktree {
 						(time_t)sqlite3_column_int64(stmt.get(), column_ids.at("creation_time")),
 						sqlite3_column_int64(stmt.get(), column_ids.at("id")),
 						&parent
-			));
+						));
 
 			err = stmt.step();
 		}
@@ -81,12 +81,24 @@ namespace tasktree {
 					creation_time,
 					sqlite3_last_insert_rowid(db.get()),
 					&parent
-		));
+					));
 
 		return out;
 	}
 
 	void TaskTree::remove(Task& task) {
+		if (task.id == 0) {
+			throw invalid_argument("cannot remove head task");
+		}
+
+		UniqueSqliteStmt stmt(db.get(), "DELETE FROM tasks WHERE id = ?");
+		stmt.bind(1, task.id);
+
+		int rc = stmt.step();
+		if (rc != SQLITE_DONE) {
+			throw runtime_error(sqlite3_errmsg(db.get()));
+		}
+
 		if (task.parent == nullptr) {
 			throw runtime_error("parent cannot be null. are you trying to remove the root task?");
 		}
@@ -98,5 +110,24 @@ namespace tasktree {
 		}
 	}
 
-# undef HANDLE_SQL_ERROR
-}
+	Task* TaskTree::get_by_id(sqlite3_int64 id) {
+		tasktree::Task& task = get_head();
+
+		for (int i = 0; i < get_head().get_child_count(); ++i) {
+			if (task.get_child(i).get_id() == id) {
+				return &task.get_child(i);
+			}
+		}
+
+		return nullptr;
+	}
+
+# undef THROW_SQL_ERROR
+
+	void TaskTree::print() {
+		for (int i = 0; i < head.get_child_count(); ++i) {
+			cout << head.get_child(i).id << ": " << head.get_child(i).name
+				<< endl;
+		}
+	}
+} // namespace tasktree

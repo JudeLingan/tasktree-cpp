@@ -1,6 +1,5 @@
 #include <iostream>
 #include <filesystem>
-#include <exception>
 #include "tasktree.hpp"
 
 using namespace std;
@@ -20,9 +19,53 @@ string get_db_dir() {
 	return DATA_DIR + SLASH + "tasktree.db";
 }
 
-static sqlite3 *db;
+tasktree::TaskTree tree(get_db_dir().c_str());
+
+void cli_rem() {
+	sqlite3_int64 id;
+	cin >> id;
+	if (cin.fail()) {
+		cout << "bad input\n";
+		cin.clear();
+		return;
+	}
+
+	tasktree::Task* taskptr = tree.get_by_id(id);
+
+	if (taskptr == nullptr) {
+		cout << "task not found";
+		return;
+	}
+
+	tree.remove(*taskptr);
+}
+
+void read_input() {
+	string command = "";
+	while (command != "exit") {
+		command = "";
+		cout << ">";
+		cin >> command;
+
+		if (command == "print") {
+			tree.print();
+		}
+
+		else if (command == "add") {
+			string name;
+			cin >> name;
+			tree.add_child(tree.get_head(), name);
+		}
+
+		else if (command == "rem") {
+			cli_rem();
+		}
+
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	}
+}
 
 int main() {
-	tasktree::TaskTree tree(get_db_dir().c_str());
+	read_input();
 	return 0;
 }
