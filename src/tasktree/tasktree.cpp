@@ -22,10 +22,10 @@ namespace tasktree {
 		
 		//load all column names and ids
 		UniqueSqliteStmt stmt(db.get(), "PRAGMA table_info(tasks)");
-		int rc = sqlite3_step(stmt.get());
+		int rc = stmt.step();
 		while (rc == SQLITE_ROW) {
 			column_ids.insert(make_pair<string, sqlite3_int64>((char*)sqlite3_column_text(stmt.get(), 1), sqlite3_column_int64(stmt.get(), 0)));
-			rc = sqlite3_step(stmt.get());
+			rc = stmt.step();
 		}
 
 		//find all children of root
@@ -73,7 +73,7 @@ namespace tasktree {
 		stmt.bind(2, (sqlite3_int64)creation_time);
 		stmt.bind(3, name);
 
-		int rc = sqlite3_step(stmt.get());
+		int rc = stmt.step();
 		if (rc != SQLITE_DONE && rc != SQLITE_ROW) THROW_SQL_ERROR;
 
 		Task& out = parent.add_child(Task(
