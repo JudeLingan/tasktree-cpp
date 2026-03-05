@@ -42,6 +42,7 @@ void cli_rem() {
 
 void read_input() {
 	string command = "";
+	cin.clear();
 	while (command != "exit") {
 		command = "";
 		cout << ">";
@@ -59,6 +60,9 @@ void read_input() {
 
 		else if (command == "rem") {
 			cli_rem();
+		}
+		else {
+			cout << "invalid input" << endl;
 		}
 
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
