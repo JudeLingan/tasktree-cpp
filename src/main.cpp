@@ -1,75 +1,29 @@
-#include <iostream>
-#include <filesystem>
-#include "tasktree.hpp"
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <memory>
+#include "TaskTreeBackend.hpp"
 
-using namespace std;
+int main(int argc, char *argv[])
+{
+    QGuiApplication app(argc, argv);
 
-#if defined(__WIN32) || defined(__WIN64)
-#define SLASH '\\'
-const string home = getenv("USERDATA");
+    auto backend = std::make_unique<TaskTreeBackend>();
+    auto engine = std::make_unique<QQmlApplicationEngine>();
+    
+    engine->rootContext()->setContextProperty("backend", backend.get());
+    
+    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    engine->load(url);
+    
+    if (engine->rootObjects().isEmpty())
+        return -1;
 
-#else
-#define SLASH '/'
-const string DATA_DIR = string(getenv("HOME")) + "/.local/share/tasktree";
-
-#endif
-
-string get_db_dir() {
-	filesystem::create_directories(DATA_DIR);
-	return DATA_DIR + SLASH + "tasktree.db";
-}
-
-tasktree::TaskTree tree(get_db_dir().c_str());
-
-void cli_rem() {
-	sqlite3_int64 id;
-	cin >> id;
-	if (cin.fail()) {
-		cout << "bad input\n";
-		cin.clear();
-		return;
-	}
-
-	tasktree::Task* taskptr = tree.get_by_id(id);
-
-	if (taskptr == nullptr) {
-		cout << "task not found";
-		return;
-	}
-
-	tree.remove(*taskptr);
-}
-
-void read_input() {
-	string command = "";
-	cin.clear();
-	while (command != "exit") {
-		command = "";
-		cout << ">";
-		cin >> command;
-
-		if (command == "print") {
-			tree.print();
-		}
-
-		else if (command == "add") {
-			string name;
-			cin >> name;
-			tree.add_child(tree.get_head(), name);
-		}
-
-		else if (command == "rem") {
-			cli_rem();
-		}
-		else {
-			cout << "invalid input" << endl;
-		}
-
-		cin.ignore(numeric_limits<streamsize>::max(), '\n');
-	}
-}
-
-int main() {
-	read_input();
-	return 0;
+    int result = app.exec();
+    
+    // Explicitly destroy in the correct order
+    engine.reset();
+    backend.reset();
+    
+    return result;
 }
