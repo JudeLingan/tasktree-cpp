@@ -1,14 +1,16 @@
 #include "TaskTreeBackend.hpp"
 #include <filesystem>
 #include <QDebug>
+#include <QtCore>
+#include <qstandardpaths.h>
 
 #if defined(__WIN32) || defined(__WIN64)
 #define SLASH '\\'
-const std::string DATA_DIR = std::string(getenv("USERDATA"));
 #else
 #define SLASH '/'
-const std::string DATA_DIR = std::string(getenv("HOME")) + "/.local/share/tasktree";
 #endif
+
+const std::string DATA_DIR = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString() + SLASH + "tasktree";
 
 std::string getDbPath() {
     std::filesystem::create_directories(DATA_DIR);
