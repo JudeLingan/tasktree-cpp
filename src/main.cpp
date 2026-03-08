@@ -4,8 +4,7 @@
 #include <memory>
 #include "TaskTreeBackend.hpp"
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
 
     auto backend = std::make_unique<TaskTreeBackend>();
