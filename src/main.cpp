@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
 
-    auto backend = std::make_unique<TaskTreeBackend>();
+    auto backend = std::make_unique<Backend>();
     auto engine = std::make_unique<QQmlApplicationEngine>();
     
     engine->rootContext()->setContextProperty("backend", backend.get());

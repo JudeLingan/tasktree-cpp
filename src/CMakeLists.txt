@@ -4,8 +4,8 @@ add_subdirectory(database)
 #set sources and options
 target_sources(Tasktree PRIVATE 
     main.cpp
-    TaskTreeBackend.hpp
-    TaskTreeBackend.cpp
+    backend.hpp
+    backend.cpp
 )
 
 # Add QML resources

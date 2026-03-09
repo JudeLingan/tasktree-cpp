@@ -22,14 +22,14 @@ void TaskModel::setName(QString name) {
 	emit nameChanged(name);
 }
 
-TaskTreeBackend::TaskTreeBackend(QObject* parent)
+Backend::Backend(QObject* parent)
     : QObject(parent), m_tree(getDbPath()) {
     loadTasks();
 }
 
-TaskTreeBackend::~TaskTreeBackend() = default;
+Backend::~Backend() = default;
 
-void TaskTreeBackend::loadTasks() {
+void Backend::loadTasks() {
     // Clear existing tasks
     qDeleteAll(m_tasks);
     m_tasks.clear();
@@ -42,7 +42,7 @@ void TaskTreeBackend::loadTasks() {
     }
 }
 
-void TaskTreeBackend::addTask(const QString& name) {
+void Backend::addTask(const QString& name) {
     if (name.isEmpty()) {
         qWarning() << "Cannot add task with empty name";
         return;
@@ -51,12 +51,12 @@ void TaskTreeBackend::addTask(const QString& name) {
     refreshTasks();
 }
 
-void TaskTreeBackend::deleteTask(TaskModel* task) {
+void Backend::deleteTask(TaskModel* task) {
 	m_tree.remove(*task->getRef());
 	refreshTasks();
 }
 
-void TaskTreeBackend::refreshTasks() {
+void Backend::refreshTasks() {
     loadTasks();
     emit tasksChanged();
 }

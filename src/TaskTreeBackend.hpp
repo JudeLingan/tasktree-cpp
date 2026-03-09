@@ -8,15 +8,15 @@
 
 class TaskModel : public QObject {
     Q_OBJECT
-    Q_PROPERTY(tasktree::Task* ref READ getRef)
+    Q_PROPERTY(tasktree::Task& ref READ getRef)
     Q_PROPERTY(sqlite3_int64 id READ getId CONSTANT)
     Q_PROPERTY(QString name READ getName NOTIFY nameChanged)
 
 public:
-    TaskModel(tasktree::Task* ref, QObject* parent = nullptr)
-        : QObject(parent), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())) {}
+    TaskModel(tasktree::Task& ref, QObject* parent = nullptr)
+        : QObject(parent), m_ref(ref), m_id(ref.get_id()), m_name(QString::fromStdString(ref.get_name())) {}
 
-	tasktree::Task* getRef() const noexcept { return m_ref; }
+	tasktree::Task& getRef() const noexcept { return m_ref; }
     sqlite3_int64 getId() const noexcept { return m_id; }
     QString getName() const noexcept { return m_name; }
 	
@@ -26,18 +26,18 @@ signals:
 	void nameChanged(QString newName);
 
 private:
-	tasktree::Task* m_ref;
+	tasktree::Task& m_ref;
     const sqlite3_int64 m_id;
     QString m_name;
 };
 
-class TaskTreeBackend : public QObject {
+class Backend : public QObject {
     Q_OBJECT
     Q_PROPERTY(QList<QObject*> tasks READ getTasks NOTIFY tasksChanged)
 
 public:
-    explicit TaskTreeBackend(QObject* parent = nullptr);
-    ~TaskTreeBackend();
+    explicit Backend(QObject* parent = nullptr);
+    ~Backend();
 
     QList<QObject*> getTasks() const { return m_tasks; }
 
