@@ -12,13 +12,15 @@ Tapping and holding on a task will let you change its name.
 When in this subui, there will be a title with the name of the task that is currently "focused" and a "go back" button.
 
 ## Initial Goals
-- [X] db connection (I know this table layout works because it worked on the C version, which has recursion)
+- [ ] completing tasks
+- [ ] subtasks of subtasks of subtasks!
+- [ ] sort completed to bottom
+- [ ] sort by creation date
+- [X] SQLite connection (I know this table layout works because it worked on the C version, which has recursion)
 - [X] adding tasks
 - [X] deleting tasks
 - [X] task creation time property
-- [ ] completing tasks
 - [X] basic ui
-- [ ] subtasks of subtasks of subtasks!
 
 ## Building
 * Make sure cmake, a c compiler, sqlite, and qt6 are installed
