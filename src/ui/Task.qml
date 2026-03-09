@@ -13,6 +13,8 @@ Rectangle {
 
 	function enableInput(): void {
 		text_field.visible = true
+		text_field.forceActiveFocus()
+		text_field.selectAll()
 		normal_text.visible = false
 	}
 
