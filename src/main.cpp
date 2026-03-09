@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     
     engine->rootContext()->setContextProperty("backend", backend.get());
     
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    const QUrl url(QStringLiteral("qrc:/Main.qml"));
     engine->load(url);
     
     if (engine->rootObjects().isEmpty())

@@ -1,17 +1,12 @@
 add_subdirectory(tasktree)
 add_subdirectory(database)
+add_subdirectory(ui)
 
 #set sources and options
 target_sources(Tasktree PRIVATE 
     main.cpp
     backend.hpp
     backend.cpp
-)
-
-# Add QML resources
-qt6_add_resources(Tasktree "qml"
-    PREFIX "/"
-    FILES main.qml
 )
 
 set_target_properties(Tasktree PROPERTIES CXX_STANDARD 20)
