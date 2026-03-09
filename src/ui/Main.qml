@@ -67,13 +67,6 @@ ApplicationWindow {
             }
         }
 
-        Text {
-            id: selectedInfo
-            text: "Ready"
-            font.pixelSize: 12
-            color: sysPalette.windowText
-        }
-
         RowLayout {
             spacing: 8
             Layout.fillWidth: true
