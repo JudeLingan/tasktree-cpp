@@ -17,13 +17,14 @@ std::string getDbPath() {
     return DATA_DIR + SLASH + "tasktree.db";
 }
 
-TaskModel::TaskModel(tasktree::Task* ref, QObject* parent)
-	:QObject(parent), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())) {}
+TaskModel::TaskModel(Backend& backend, tasktree::Task* ref, QObject* parent)
+	:QObject(parent), backend(backend), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())) {}
 
-void TaskModel::setName(QString name) {
-	if (this->m_name != name) {
-		m_name = name;
-		emit nameChanged(name);
+void TaskModel::setName(QString newName) {
+	if (m_name != newName) {
+		backend.changeTaskName(this, newName);
+		m_name = newName;
+		nameChanged(newName);
 	}
 }
 
@@ -43,7 +44,7 @@ void Backend::loadTasks() {
     tasktree::Task& head = m_tree.get_head();
     for (size_t i = 0; i < head.get_child_count(); ++i) {
         tasktree::Task& child = head.get_child(i);
-        m_tasks.append(new TaskModel(&child, this));
+        m_tasks.append(new TaskModel(*this, &child, this));
     }
 }
 

@@ -4,12 +4,10 @@ import QtQuick.Layouts
 
 RowLayout {
 	id: root
-	property string text: ""
+	property string name: ""
 	signal deleteClicked()
-	signal nameChanged(newName: string)
 
 	function enableInput(): void {
-		text_field.text = text
 		text_field.visible = true
 		normal_text.visible = false
 	}
@@ -19,13 +17,9 @@ RowLayout {
 		normal_text.visible = true
 	}
 
-	onTextChanged: {
-		text_field.text = text
-	}
-
 	Text {
 		id: normal_text
-		text: root.text
+		text: name
 		Layout.fillWidth: true
 		font.pixelSize: 14
 		verticalAlignment: Text.AlignVCenter
@@ -38,14 +32,13 @@ RowLayout {
 
 	TextField {
 		id: text_field
-		text: ""
+		text: name
 		visible: false
 		Layout.fillWidth: true
 		font.pixelSize: 14
 		verticalAlignment: Text.AlignVCenter
 		onEditingFinished: {
-			root.text = text
-			root.nameChanged(text)
+			name = text
 			root.disableInput()
 		}
 	}

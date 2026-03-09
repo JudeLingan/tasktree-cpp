@@ -64,11 +64,10 @@ ApplicationWindow {
                     width: taskList.width - 16
                     spacing: 8
                     height: 40
-					text: modelData.name
+					name: modelData.name
 					onDeleteClicked: backend.deleteTask(modelData)
-					onNameChanged: (newName) => {
-						modelData.name = newName
-						backend.changeTaskName(modelData, modelData.name)
+					onNameChanged: {
+						modelData.name = name
 					}
                 }
 
