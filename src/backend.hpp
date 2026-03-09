@@ -3,7 +3,6 @@
 #include <QObject>
 #include <QList>
 #include <QString>
-#include <qobject.h>
 #include <qstandardpaths.h>
 #include "tasktree/tasktree.hpp"
 
