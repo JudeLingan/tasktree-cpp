@@ -8,6 +8,11 @@ ApplicationWindow {
     height: 500
     visible: true
     title: "Tasktree"
+	SystemPalette {
+		id: sysPalette
+	}
+
+	property int radius: 2
 
     ColumnLayout {
         anchors.fill: parent
@@ -18,6 +23,55 @@ ApplicationWindow {
             text: "Tasks"
             font.pixelSize: 24
             font.bold: true
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            color: sysPalette.base
+			radius: root.radius
+			antialiasing: true
+            border.color: sysPalette.midlight
+            border.width: 1
+
+            ListView {
+                id: taskList
+                anchors.fill: parent
+                anchors.margins: 8
+                spacing: 4
+                clip: true
+
+                model: backend.tasks
+
+                delegate: Task {
+					antialiasing: true
+					border.color: sysPalette.midlight
+                    spacing: 8
+                    width: taskList.width
+                    height: 40
+
+					color: sysPalette.alternateBase
+					radius: root.radius
+					margins: 8
+
+					name: modelData.name
+					onDeleteClicked: backend.deleteTask(modelData)
+					onNameChanged: {
+						modelData.name = name
+					}
+                }
+
+                ScrollBar.vertical: ScrollBar {
+                    policy: ScrollBar.AsNeeded
+                }
+            }
+        }
+
+        Text {
+            id: selectedInfo
+            text: "Ready"
+            font.pixelSize: 12
+            color: sysPalette.windowText
         }
 
         RowLayout {
@@ -42,46 +96,6 @@ ApplicationWindow {
                     }
                 }
             }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            color: "#f5f5f5"
-            border.color: "#ddd"
-            border.width: 1
-
-            ListView {
-                id: taskList
-                anchors.fill: parent
-                anchors.margins: 8
-                spacing: 4
-                clip: true
-
-                model: backend.tasks
-
-                delegate: Task {
-                    width: taskList.width - 16
-                    spacing: 8
-                    height: 40
-					name: modelData.name
-					onDeleteClicked: backend.deleteTask(modelData)
-					onNameChanged: {
-						modelData.name = name
-					}
-                }
-
-                ScrollBar.vertical: ScrollBar {
-                    policy: ScrollBar.AsNeeded
-                }
-            }
-        }
-
-        Text {
-            id: selectedInfo
-            text: "Ready"
-            font.pixelSize: 12
-            color: "#666"
         }
     }
 }

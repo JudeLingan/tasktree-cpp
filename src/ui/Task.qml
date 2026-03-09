@@ -2,9 +2,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-RowLayout {
+Rectangle {
 	id: root
+
 	property string name: ""
+	property real spacing: 0
+	property int margins: 0
+
 	signal deleteClicked()
 
 	function enableInput(): void {
@@ -17,34 +21,40 @@ RowLayout {
 		normal_text.visible = true
 	}
 
-	Text {
-		id: normal_text
-		text: name
-		Layout.fillWidth: true
-		font.pixelSize: 14
-		verticalAlignment: Text.AlignVCenter
+	RowLayout {
+		anchors.fill: parent
+		anchors.margins: root.margins
+		spacing: root.spacing
 
-		MouseArea {
-			anchors.fill: parent
-			onPressAndHold: root.enableInput()
+		Text {
+			id: normal_text
+			text: name
+			Layout.fillWidth: true
+			font.pixelSize: 14
+			verticalAlignment: Text.AlignVCenter
+
+			MouseArea {
+				anchors.fill: parent
+				onPressAndHold: root.enableInput()
+			}
 		}
-	}
 
-	TextField {
-		id: text_field
-		text: name
-		visible: false
-		Layout.fillWidth: true
-		font.pixelSize: 14
-		verticalAlignment: Text.AlignVCenter
-		onEditingFinished: {
-			name = text
-			root.disableInput()
+		TextField {
+			id: text_field
+			text: name
+			visible: false
+			Layout.fillWidth: true
+			font.pixelSize: 14
+			verticalAlignment: Text.AlignVCenter
+			onEditingFinished: {
+				name = text
+				root.disableInput()
+			}
 		}
-	}
 
-	Button {
-		text: "Delete"
-		onClicked: root.deleteClicked()
+		Button {
+			text: "Delete"
+			onClicked: root.deleteClicked()
+		}
 	}
 }
