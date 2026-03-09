@@ -57,7 +57,7 @@ ApplicationWindow {
 					name: modelData.name
 					onDeleteClicked: backend.deleteTask(modelData)
 					onNameChanged: {
-						modelData.name = name
+						backend.setTaskName(modelData, name)
 					}
                 }
 

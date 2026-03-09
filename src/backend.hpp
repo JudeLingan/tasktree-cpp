@@ -8,11 +8,13 @@
 
 class Backend;
 
-class TaskModel : public QObject {
+class TaskModel: public QObject {
+	friend Backend;
+
 	Q_OBJECT
 		Q_PROPERTY(tasktree::Task* ref READ getRef)
 		Q_PROPERTY(sqlite3_int64 id READ getId CONSTANT)
-		Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged)
+		Q_PROPERTY(QString name READ getName NOTIFY nameChanged)
 
 	public:
 		TaskModel(Backend& backend, tasktree::Task* ref, QObject* parent = nullptr);
@@ -29,13 +31,9 @@ class TaskModel : public QObject {
 		const sqlite3_int64 m_id;
 		QString m_name;
 		Backend& backend;
-
-		void setName(QString newName);
 };
 
-class Backend : public QObject {
-	friend TaskModel;
-
+class Backend: public QObject {
 	Q_OBJECT
 		Q_PROPERTY(QList<QObject*> tasks READ getTasks NOTIFY tasksChanged)
 
@@ -49,6 +47,7 @@ class Backend : public QObject {
 		Q_INVOKABLE void addTask(const QString& name);
 		Q_INVOKABLE void deleteTask(TaskModel* task);
 		Q_INVOKABLE void refreshTasks();
+		Q_INVOKABLE void setTaskName(TaskModel* task, const QString& new_name);
 
 	signals:
 		void tasksChanged();
@@ -58,5 +57,4 @@ class Backend : public QObject {
 
 		tasktree::TaskTree m_tree;
 		QList<QObject*> m_tasks;
-		void changeTaskName(TaskModel* task, const QString& new_name);
 };

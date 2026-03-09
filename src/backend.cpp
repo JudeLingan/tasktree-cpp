@@ -20,14 +20,6 @@ std::string getDbPath() {
 TaskModel::TaskModel(Backend& backend, tasktree::Task* ref, QObject* parent)
 	:QObject(parent), backend(backend), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())) {}
 
-void TaskModel::setName(QString newName) {
-	if (m_name != newName) {
-		backend.changeTaskName(this, newName);
-		m_name = newName;
-		nameChanged(newName);
-	}
-}
-
 Backend::Backend(QObject* parent)
     : QObject(parent), m_tree(getDbPath()) {
     loadTasks();
@@ -67,6 +59,10 @@ void Backend::refreshTasks() {
     emit tasksChanged();
 }
 
-void Backend::changeTaskName(TaskModel* task, const QString& name) {
+void Backend::setTaskName(TaskModel* task, const QString& name) {
+	if (task->getName() == name) return;
+
 	m_tree.set_task_name(*task->getRef(), name.toStdString());
+	task->m_name = name;
+	task->nameChanged(name);
 }
