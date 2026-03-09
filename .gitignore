@@ -1,5 +1,6 @@
 .cache/
 build/
 vcpkg_installed/
+.clangd
 compile_commands.json
 CMakeUserPresets.json
