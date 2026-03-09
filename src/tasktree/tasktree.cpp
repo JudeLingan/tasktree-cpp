@@ -110,6 +110,23 @@ namespace tasktree {
 		}
 	}
 
+	void TaskTree::set_task_name(Task& task, const std::string& name) {
+		if (task.id == 0) {
+			throw invalid_argument("head task's name should not be set");
+		}
+
+		UniqueSqliteStmt stmt(db.get(), "UPDATE tasks SET name=? WHERE id=?");
+		stmt.bind(1, name);
+		stmt.bind(2, task.id);
+
+		int rc = stmt.step();
+		if (rc != SQLITE_DONE) {
+			throw runtime_error(sqlite3_errmsg(db.get()));
+		}
+
+		task.name = name;
+	}
+
 	Task* TaskTree::get_by_id(sqlite3_int64 id) {
 		tasktree::Task& task = get_head();
 

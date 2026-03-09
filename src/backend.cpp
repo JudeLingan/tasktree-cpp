@@ -17,9 +17,14 @@ std::string getDbPath() {
     return DATA_DIR + SLASH + "tasktree.db";
 }
 
+TaskModel::TaskModel(tasktree::Task* ref, QObject* parent)
+	:QObject(parent), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())) {}
+
 void TaskModel::setName(QString name) {
-	m_name = name;
-	emit nameChanged(name);
+	if (this->m_name != name) {
+		m_name = name;
+		emit nameChanged(name);
+	}
 }
 
 Backend::Backend(QObject* parent)
@@ -59,4 +64,8 @@ void Backend::deleteTask(TaskModel* task) {
 void Backend::refreshTasks() {
     loadTasks();
     emit tasksChanged();
+}
+
+void Backend::changeTaskName(TaskModel* task, const QString& name) {
+	m_tree.set_task_name(*task->getRef(), name.toStdString());
 }

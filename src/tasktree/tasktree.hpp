@@ -45,13 +45,16 @@ namespace tasktree {
 			//remove task from database and memory
 			void remove(Task& task);
 
+			//change name of tsk
+			void set_task_name(Task& task, const std::string& name);
+
 			//mark task as complete in database
 			void complete(Task&);
 
 			//print all child tasks
-            void print();
+			void print();
 
-                        //get first task loaded into memory with this id
+			//get first task loaded into memory with this id
 			//returns null if not found
 			Task* get_by_id(sqlite3_int64 id);
 	};

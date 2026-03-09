@@ -60,24 +60,16 @@ ApplicationWindow {
 
                 model: backend.tasks
 
-                delegate: RowLayout {
+                delegate: Task {
                     width: taskList.width - 16
                     spacing: 8
                     height: 40
-
-                    Text {
-                        text: modelData.name
-                        Layout.fillWidth: true
-                        font.pixelSize: 14
-                        verticalAlignment: Text.AlignVCenter
-                    }
-
-                    Button {
-                        text: "Delete"
-                        onClicked: {
-                            backend.deleteTask(modelData)
-                        }
-                    }
+					text: modelData.name
+					onDeleteClicked: backend.deleteTask(modelData)
+					onNameChanged: (newName) => {
+						modelData.name = newName
+						backend.changeTaskName(modelData, modelData.name)
+					}
                 }
 
                 ScrollBar.vertical: ScrollBar {

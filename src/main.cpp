@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <memory>
-#include "TaskTreeBackend.hpp"
+#include "backend.hpp"
 
 int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);

@@ -10,11 +10,10 @@ class TaskModel : public QObject {
     Q_OBJECT
     Q_PROPERTY(tasktree::Task* ref READ getRef)
     Q_PROPERTY(sqlite3_int64 id READ getId CONSTANT)
-    Q_PROPERTY(QString name READ getName NOTIFY nameChanged)
+    Q_PROPERTY(QString name READ getName WRITE setName NOTIFY nameChanged)
 
 public:
-    TaskModel(tasktree::Task* ref, QObject* parent = nullptr)
-        : QObject(parent), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())) {}
+    TaskModel(tasktree::Task* ref, QObject* parent = nullptr);
 
 	tasktree::Task* getRef() const noexcept { return m_ref; }
     sqlite3_int64 getId() const noexcept { return m_id; }
@@ -44,6 +43,7 @@ public:
     Q_INVOKABLE void addTask(const QString& name);
     Q_INVOKABLE void deleteTask(TaskModel* task);
     Q_INVOKABLE void refreshTasks();
+	Q_INVOKABLE void changeTaskName(TaskModel* task, const QString& new_name);
 
 signals:
     void tasksChanged();
