@@ -75,7 +75,7 @@ ApplicationWindow {
                     Button {
                         text: "Delete"
                         onClicked: {
-                            backend.deleteTask(modelData.id)
+                            backend.deleteTask(modelData)
                         }
                     }
                 }

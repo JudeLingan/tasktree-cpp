@@ -3,22 +3,31 @@
 #include <QObject>
 #include <QList>
 #include <QString>
+#include <qstandardpaths.h>
 #include "tasktree/tasktree.hpp"
 
 class TaskModel : public QObject {
     Q_OBJECT
+    Q_PROPERTY(tasktree::Task* ref READ getRef)
     Q_PROPERTY(sqlite3_int64 id READ getId CONSTANT)
-    Q_PROPERTY(QString name READ getName CONSTANT)
+    Q_PROPERTY(QString name READ getName NOTIFY nameChanged)
 
 public:
-    TaskModel(sqlite3_int64 id, const QString& name, QObject* parent = nullptr)
-        : QObject(parent), m_id(id), m_name(name) {}
+    TaskModel(tasktree::Task* ref, QObject* parent = nullptr)
+        : QObject(parent), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())) {}
 
-    sqlite3_int64 getId() const { return m_id; }
-    QString getName() const { return m_name; }
+	tasktree::Task* getRef() const noexcept { return m_ref; }
+    sqlite3_int64 getId() const noexcept { return m_id; }
+    QString getName() const noexcept { return m_name; }
+	
+	void setName(QString newName);
+
+signals:
+	void nameChanged(QString newName);
 
 private:
-    sqlite3_int64 m_id;
+	tasktree::Task* m_ref;
+    const sqlite3_int64 m_id;
     QString m_name;
 };
 
@@ -33,7 +42,7 @@ public:
     QList<QObject*> getTasks() const { return m_tasks; }
 
     Q_INVOKABLE void addTask(const QString& name);
-    Q_INVOKABLE void deleteTask(sqlite3_int64 id);
+    Q_INVOKABLE void deleteTask(TaskModel* task);
     Q_INVOKABLE void refreshTasks();
 
 signals:
@@ -42,6 +51,6 @@ signals:
 private:
     void loadTasks();
 
-    std::unique_ptr<tasktree::TaskTree> m_tree;
+    tasktree::TaskTree m_tree;
     QList<QObject*> m_tasks;
 };
