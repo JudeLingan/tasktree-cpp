@@ -56,6 +56,7 @@ class Backend: public QObject {
 		Q_INVOKABLE void refreshTasks();
 		Q_INVOKABLE void setTaskName(TaskModel* task, const QString& new_name);
 		Q_INVOKABLE void setTaskCompleted(TaskModel* task, bool completed);
+		Q_INVOKABLE void goBack();
 
 	signals:
 		void tasksChanged();

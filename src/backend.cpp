@@ -78,3 +78,8 @@ void Backend::setTaskCompleted(TaskModel* task, bool completed) {
 
 	assert(task->isCompleted() == task->getRef()->is_completed());
 }
+
+void Backend::goBack() {
+	if (getCurrent()->m_id == 0) return;
+	setCurrent(new TaskModel(*this, &getCurrent()->getRef()->get_parent()));
+}

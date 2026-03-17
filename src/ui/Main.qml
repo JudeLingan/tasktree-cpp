@@ -19,11 +19,17 @@ ApplicationWindow {
         anchors.margins: 16
         spacing: 12
 
-        Text {
-            text: "Tasks"
-            font.pixelSize: 24
-            font.bold: true
-        }
+		RowLayout {
+			Button {
+				text: "Go Back"
+				onClicked: backend.goBack()
+			}
+			Text {
+				text: "Tasks"
+				font.pixelSize: 24
+				font.bold: true
+			}
+		}
 
         Rectangle {
             Layout.fillWidth: true
