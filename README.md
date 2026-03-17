@@ -12,9 +12,9 @@ Tapping and holding on a task will let you change its name.
 When in this subui, there will be a title with the name of the task that is currently "focused" and a "go back" button.
 
 ## Initial Goals
-- [ ] subtasks of subtasks of subtasks!
 - [ ] sort completed to bottom
 - [ ] sort by creation date
+- [X] subtasks of subtasks of subtasks!
 - [X] completing tasks
 - [X] SQLite connection (I know this table layout works because it worked on the C version, which has recursion)
 - [X] adding tasks
