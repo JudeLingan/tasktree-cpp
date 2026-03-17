@@ -12,9 +12,10 @@ class TaskModel: public QObject {
 	friend Backend;
 
 	Q_OBJECT
-		Q_PROPERTY(tasktree::Task* ref READ getRef)
 		Q_PROPERTY(sqlite3_int64 id READ getId CONSTANT)
+		Q_PROPERTY(tasktree::Task* ref READ getRef)
 		Q_PROPERTY(QString name READ getName NOTIFY nameChanged)
+		Q_PROPERTY(bool completed READ isCompleted NOTIFY completedChanged)
 
 	public:
 		TaskModel(Backend& backend, tasktree::Task* ref, QObject* parent = nullptr);
@@ -22,14 +23,18 @@ class TaskModel: public QObject {
 		tasktree::Task* getRef() const noexcept { return m_ref; }
 		sqlite3_int64 getId() const noexcept { return m_id; }
 		QString getName() const noexcept { return m_name; }
+		bool isCompleted() const noexcept { return m_completed; }
 
 	signals:
 		void nameChanged(QString newName);
+		void completedChanged();
 
 	private:
 		tasktree::Task* m_ref;
 		const sqlite3_int64 m_id;
 		QString m_name;
+		bool m_completed;
+
 		Backend& backend;
 };
 
@@ -48,6 +53,7 @@ class Backend: public QObject {
 		Q_INVOKABLE void deleteTask(TaskModel* task);
 		Q_INVOKABLE void refreshTasks();
 		Q_INVOKABLE void setTaskName(TaskModel* task, const QString& new_name);
+		Q_INVOKABLE void setTaskCompleted(TaskModel* task, bool completed);
 
 	signals:
 		void tasksChanged();

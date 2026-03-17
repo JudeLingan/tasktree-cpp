@@ -1,24 +1,10 @@
 #include "backend.hpp"
-#include <filesystem>
 #include <QDebug>
 #include <QtCore>
-#include <qstandardpaths.h>
-
-#if defined(__WIN32) || defined(__WIN64)
-#define SLASH '\\'
-#else
-#define SLASH '/'
-#endif
-
-const std::string DATA_DIR = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString() + SLASH + "tasktree";
-
-std::string getDbPath() {
-    std::filesystem::create_directories(DATA_DIR);
-    return DATA_DIR + SLASH + "tasktree.db";
-}
+#include "util.hpp"
 
 TaskModel::TaskModel(Backend& backend, tasktree::Task* ref, QObject* parent)
-	:QObject(parent), backend(backend), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())) {}
+	:QObject(parent), backend(backend), m_ref(ref), m_id(ref->get_id()), m_name(QString::fromStdString(ref->get_name())), m_completed(ref->is_completed()) {}
 
 Backend::Backend(QObject* parent)
     : QObject(parent), m_tree(getDbPath()) {
@@ -65,4 +51,16 @@ void Backend::setTaskName(TaskModel* task, const QString& name) {
 	m_tree.set_task_name(*task->getRef(), name.toStdString());
 	task->m_name = name;
 	task->nameChanged(name);
+
+	assert(task->getName().toStdString() == task->getRef()->get_name());
+}
+
+void Backend::setTaskCompleted(TaskModel* task, bool completed) {
+	if (task->isCompleted() == completed) return;
+
+	m_tree.toggle_task_completed(*task->getRef());
+	task->m_completed = completed;
+	task->completedChanged();
+
+	assert(task->isCompleted() == task->getRef()->is_completed());
 }

@@ -12,12 +12,13 @@ namespace tasktree {
 			sqlite3_int64 id;
 			Task* parent;
 			std::vector<Task> children;
+			bool completed;
 
 			//constructor that sets all vars to their respective values
-			Task(const std::string& name, time_t creation_time, sqlite3_int64 id, Task* parent) noexcept;
+			Task(const std::string& name, time_t creation_time, sqlite3_int64 id, bool completed, Task* parent) noexcept;
 
 			//same as other constructor but uses current time as creation_time
-			Task(const std::string name, sqlite3_int64 id, Task* parent) noexcept;
+			Task(const std::string name, sqlite3_int64 id, Task* parent, bool completed) noexcept;
 
 			Task() noexcept;
 
@@ -37,6 +38,9 @@ namespace tasktree {
 
 			//returns name
 			std::string get_name() const noexcept { return name; }
+
+			//returns true if task is completed
+			bool is_completed() const noexcept { return completed; }
 
 			//returns id
 			sqlite3_int64 get_id() const noexcept { return id; }

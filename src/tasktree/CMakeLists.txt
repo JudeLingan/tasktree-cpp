@@ -22,5 +22,5 @@ target_sources(Tasktreelib
 
 target_link_libraries(Tasktreelib
 	PRIVATE Task
-	PRIVATE DatabaseUniqueSqlite
+	PUBLIC DatabaseUniqueSqlite
 )

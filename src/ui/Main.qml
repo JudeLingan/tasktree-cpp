@@ -44,21 +44,19 @@ ApplicationWindow {
                 model: backend.tasks
 
                 delegate: Task {
-					antialiasing: true
-					border.color: sysPalette.midlight
                     spacing: 8
                     width: taskList.width
                     height: 40
 
-					color: sysPalette.alternateBase
 					radius: root.radius
 					margins: 8
 
 					name: modelData.name
+					completed: modelData.completed
+
 					onDeleteClicked: backend.deleteTask(modelData)
-					onNameChanged: {
-						backend.setTaskName(modelData, name)
-					}
+					onNameChanged: backend.setTaskName(modelData, name)
+					onCompletedChanged: backend.setTaskCompleted(modelData, completed)
                 }
 
                 ScrollBar.vertical: ScrollBar {

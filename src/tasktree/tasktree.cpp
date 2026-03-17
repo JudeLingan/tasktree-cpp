@@ -17,7 +17,12 @@ namespace tasktree {
 
 	TaskTree::TaskTree(const string& path) : db(path) {
 		//create table if not exists
-		string sql_tablegen = "CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY NOT NULL CHECK (id != 0), parent INTEGER NOT NULL, creation_time INTEGER NOT NULL, completed INTEGER NOT NULL DEFAULT 0, name TEXT)";
+		const string sql_tablegen = "CREATE TABLE IF NOT EXISTS tasks (\
+									 id INTEGER PRIMARY KEY NOT NULL CHECK (id != 0),\
+									 parent INTEGER NOT NULL, creation_time INTEGER NOT NULL,\
+									 completed INTEGER NOT NULL DEFAULT 0,\
+									 name TEXT)";
+
 		db.exec(sql_tablegen, nullptr, nullptr);
 
 		//load all column names and ids
@@ -43,17 +48,11 @@ namespace tasktree {
 
 		//load all tasks from the database
 		while(err == SQLITE_ROW) {
-			//ensure name is not null
-			string name = "";
-			const char* raw_name = (const char*)sqlite3_column_text(stmt.get(), column_ids.at("name"));
-			if (raw_name != nullptr) {
-				name = raw_name;
-			}
-
 			parent.add_child(Task(
-						name,
-						(time_t)sqlite3_column_int64(stmt.get(), column_ids.at("creation_time")),
-						sqlite3_column_int64(stmt.get(), column_ids.at("id")),
+						stmt.column_string(column_ids.at("name")),
+						stmt.column_int(column_ids.at("creation_time")),
+						stmt.column_int(column_ids.at("id")),
+						stmt.column_int(column_ids.at("completed")),
 						&parent
 						));
 
@@ -80,6 +79,7 @@ namespace tasktree {
 					name,
 					creation_time,
 					sqlite3_last_insert_rowid(db.get()),
+					false,
 					&parent
 					));
 
@@ -119,12 +119,23 @@ namespace tasktree {
 		stmt.bind(1, name);
 		stmt.bind(2, task.id);
 
-		int rc = stmt.step();
-		if (rc != SQLITE_DONE) {
+		if (stmt.step() != SQLITE_DONE) {
 			throw runtime_error(sqlite3_errmsg(db.get()));
 		}
 
 		task.name = name;
+	}
+
+	void TaskTree::toggle_task_completed(Task& task) {
+		UniqueSqliteStmt stmt(db.get(), "UPDATE tasks SET completed=? WHERE id=?");
+		stmt.bind(1, (sqlite3_int64)!task.completed);
+		stmt.bind(2, task.id);
+
+		if (stmt.step() != SQLITE_DONE) {
+			throw runtime_error(sqlite3_errmsg(db.get()));
+		}
+
+		task.completed = !task.completed;
 	}
 
 	Task* TaskTree::get_by_id(sqlite3_int64 id) {

@@ -10,6 +10,7 @@ find_package(SQLite3 REQUIRED)
 
 # adding executables
 add_executable(Tasktree)
+add_executable(cli)
 
 #add_executable(Test)
 

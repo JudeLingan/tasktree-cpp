@@ -12,9 +12,9 @@ namespace tasktree {
 			// --- private variables ---
 
 			Task head = Task();
-			database::UniqueSqlite db;        
+			database::UniqueSqlite db;
 			std::unordered_map<std::string, sqlite3_int64> column_ids = {}; //contains pairs of columns and int ids
-			std::vector<std::string> column_names = {"id", "parent", "name", "creation time"}; //
+			std::vector<std::string> column_names = {"id", "parent", "name", "creation time", "completed"}; //
 
 			// --- tree functions ---
 
@@ -49,7 +49,7 @@ namespace tasktree {
 			void set_task_name(Task& task, const std::string& name);
 
 			//mark task as complete in database
-			void complete(Task&);
+			void toggle_task_completed(Task&);
 
 			//print all child tasks
 			void print();
