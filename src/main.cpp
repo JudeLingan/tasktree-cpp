@@ -1,28 +1,18 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <memory>
 #include "backend.hpp"
 
 int main(int argc, char *argv[]) {
     QGuiApplication app(argc, argv);
+	Backend backend;
+	QQmlApplicationEngine engine;
 
-    auto backend = std::make_unique<Backend>();
-    auto engine = std::make_unique<QQmlApplicationEngine>();
-    
-    engine->rootContext()->setContextProperty("backend", backend.get());
-    
-    const QUrl url(QStringLiteral("qrc:/Main.qml"));
-    engine->load(url);
-    
-    if (engine->rootObjects().isEmpty())
+    engine.rootContext()->setContextProperty("backend", &backend);
+	engine.load("src/ui/Main.qml");
+
+    if (engine.rootObjects().isEmpty())
         return -1;
 
-    int result = app.exec();
-    
-    // Explicitly destroy in the correct order
-    engine.reset();
-    backend.reset();
-    
-    return result;
+    return app.exec();
 }

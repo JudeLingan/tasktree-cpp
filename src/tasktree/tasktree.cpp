@@ -59,6 +59,10 @@ namespace tasktree {
 			err = stmt.step();
 		}
 
+		for (int i = 0; i < parent.get_child_count(); ++i) {
+			load_child_tasks(parent.get_child(i));
+		}
+
 		//throw error if sqlite fails
 		if (err != SQLITE_DONE) THROW_SQL_ERROR;
 	}

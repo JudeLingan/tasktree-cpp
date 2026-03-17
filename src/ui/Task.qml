@@ -11,6 +11,7 @@ Rectangle {
 	id: root
 
 	signal deleteClicked()
+	signal taskClicked()
 
 	function getColor(): color {
 		if (completed_box.checked === true) {
@@ -60,6 +61,7 @@ Rectangle {
 			MouseArea {
 				anchors.fill: parent
 				onPressAndHold: root.enableInput()
+				onClicked: root.taskClicked()
 			}
 		}
 

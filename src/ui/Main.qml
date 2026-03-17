@@ -55,6 +55,7 @@ ApplicationWindow {
 					completed: modelData.completed
 
 					onDeleteClicked: backend.deleteTask(modelData)
+					onTaskClicked: backend.current = modelData
 					onNameChanged: backend.setTaskName(modelData, name)
 					onCompletedChanged: backend.setTaskCompleted(modelData, completed)
                 }

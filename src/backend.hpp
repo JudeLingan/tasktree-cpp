@@ -41,12 +41,14 @@ class TaskModel: public QObject {
 class Backend: public QObject {
 	Q_OBJECT
 		Q_PROPERTY(QList<QObject*> tasks READ getTasks NOTIFY tasksChanged)
+		Q_PROPERTY(TaskModel* current READ getCurrent WRITE setCurrent NOTIFY currentChanged)
 
 	public:
 		explicit Backend(QObject* parent = nullptr);
 		~Backend();
 
 		QList<QObject*> getTasks() const { return m_tasks; }
+		TaskModel* getCurrent() const { return m_current; }
 
 		//exposed functions
 		Q_INVOKABLE void addTask(const QString& name);
@@ -57,10 +59,13 @@ class Backend: public QObject {
 
 	signals:
 		void tasksChanged();
+		void currentChanged();
 
 	private:
+		void setCurrent(TaskModel* current);
 		void loadTasks();
 
 		tasktree::TaskTree m_tree;
 		QList<QObject*> m_tasks;
+		TaskModel* m_current;
 };
