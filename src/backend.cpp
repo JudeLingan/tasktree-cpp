@@ -41,10 +41,11 @@ void Backend::loadTasks() {
 	for (first_completed = 0; first_completed < m_tasks.size() && !static_cast<TaskModel*>(m_tasks.at(first_completed))->isCompleted(); ++first_completed);
 
 	auto creation_compare = [](QObject* a, QObject* b) -> bool {
-		return static_cast<TaskModel*>(a)->getRef()->get_creation_time() > static_cast<TaskModel*>(b)->getRef()->get_creation_time();
+		return static_cast<TaskModel*>(a)->getRef()->get_creation_time() < static_cast<TaskModel*>(b)->getRef()->get_creation_time();
 	};
 
 	std::sort(m_tasks.begin(), m_tasks.begin() + first_completed, creation_compare);
+	std::sort(m_tasks.begin() + first_completed, m_tasks.end(), creation_compare);
 
     qDeleteAll(old_tasks);
 }
