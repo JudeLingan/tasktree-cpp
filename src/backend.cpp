@@ -31,14 +31,20 @@ void Backend::loadTasks() {
         m_tasks.append(new TaskModel(*this, &child, this));
     }
 
-	//Sort completed tasks to end
-	struct {
-		bool operator()(TaskModel* a, TaskModel* b) const { return a->isCompleted() < b->isCompleted(); }
-	} completed_compare;
-
+	// sort completed tasks to end
 	std::sort(m_tasks.begin(), m_tasks.end(), [](QObject* a, QObject* b) {
     	return static_cast<TaskModel*>(a)->isCompleted() < static_cast<TaskModel*>(b)->isCompleted();
 	});
+
+	// sort by creation time
+	int first_completed;
+	for (first_completed = 0; first_completed < m_tasks.size() && static_cast<TaskModel*>(m_tasks.at(first_completed))->isCompleted(); ++first_completed);
+
+	auto creation_compare = [](QObject* a, QObject* b) -> bool {
+		return static_cast<TaskModel*>(a)->getRef()->get_creation_time() > static_cast<TaskModel*>(b)->getRef()->get_creation_time();
+	};
+
+	std::sort(m_tasks.begin(), m_tasks.begin() + first_completed, creation_compare);
 }
 
 void Backend::setCurrent(TaskModel* current) {
