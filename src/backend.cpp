@@ -1,6 +1,7 @@
 #include "backend.hpp"
 #include <QDebug>
 #include <QtCore>
+#include <algorithm>
 #include <qalgorithms.h>
 #include "util.hpp"
 
@@ -29,6 +30,15 @@ void Backend::loadTasks() {
         tasktree::Task& child = current.get_child(i);
         m_tasks.append(new TaskModel(*this, &child, this));
     }
+
+	//Sort completed tasks to end
+	struct {
+		bool operator()(TaskModel* a, TaskModel* b) const { return a->isCompleted() < b->isCompleted(); }
+	} completed_compare;
+
+	std::sort(m_tasks.begin(), m_tasks.end(), [](QObject* a, QObject* b) {
+    	return static_cast<TaskModel*>(a)->isCompleted() < static_cast<TaskModel*>(b)->isCompleted();
+	});
 }
 
 void Backend::setCurrent(TaskModel* current) {
@@ -77,6 +87,7 @@ void Backend::setTaskCompleted(TaskModel* task, bool completed) {
 	task->completedChanged();
 
 	assert(task->isCompleted() == task->getRef()->is_completed());
+	refreshTasks();
 }
 
 void Backend::goBack() {
