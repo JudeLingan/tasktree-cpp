@@ -13,7 +13,7 @@ When in this subui, there will be a title with the name of the task that is curr
 This ui is going to change to be more intuitive in a future update.
 
 ## Initial Goals
-- [ ] sort by creation date
+- [X] sort by creation date
 - [X] sort completed to bottom
 - [X] subtasks of subtasks of subtasks!
 - [X] completing tasks
