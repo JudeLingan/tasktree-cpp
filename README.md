@@ -1,7 +1,7 @@
 # TaskTree C++
 This repo is intended to replace my C repo, Tasktree.
 It currently has a database connection and QT Quick UI.
-An initial release for mobile will be available once the goals are complete.
+An initial prototype for mobile will be available once the goals are complete.
 It also needs a better name because TaskTree is taken.
 
 ## What is this for?
