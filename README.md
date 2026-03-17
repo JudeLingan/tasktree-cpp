@@ -10,6 +10,7 @@ The goal is to be able to cleanly have subtasks of subtasks of subtasks of subta
 On mobile, this will be done by being able to tap on a task to see its subtasks.
 Tapping and holding on a task will let you change its name.
 When in this subui, there will be a title with the name of the task that is currently "focused" and a "go back" button.
+This ui is going to change to be more intuitive in a future update.
 
 ## Initial Goals
 - [ ] sort by creation date
