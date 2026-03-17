@@ -25,7 +25,7 @@ ApplicationWindow {
 				onClicked: backend.goBack()
 			}
 			Text {
-				text: "Tasks"
+				text: backend.current.id == 0 ? "Tasks" : backend.current.name
 				font.pixelSize: 24
 				font.bold: true
 			}
