@@ -1,18 +1,27 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <exception>
+#include <qcoreapplication.h>
+#include <qlogging.h>
 #include "backend.hpp"
 
 int main(int argc, char *argv[]) {
-    QGuiApplication app(argc, argv);
-	Backend backend;
-	QQmlApplicationEngine engine;
+	try {
+		QCoreApplication::setApplicationName("tasktree");
+		QGuiApplication app(argc, argv);
+		Backend backend;
+		QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty("backend", &backend);
-	engine.load("src/ui/Main.qml");
+		engine.rootContext()->setContextProperty("backend", &backend);
+		engine.loadFromModule("TasktreeUI", "Main");
 
-    if (engine.rootObjects().isEmpty())
-        return -1;
+		if (engine.rootObjects().isEmpty())
+			return -1;
 
-    return app.exec();
+		return app.exec();
+	}
+	catch (std::exception e) {
+		qCritical("Tasktree exception get: %s", e.what());
+	}
 }

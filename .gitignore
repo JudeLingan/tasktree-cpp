@@ -1,5 +1,6 @@
 .cache/
 build/
+build-android/
 vcpkg_installed/
 .clangd
 compile_commands.json

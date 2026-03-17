@@ -6,7 +6,7 @@
 using namespace std;
 
 namespace database {
-	UniqueSqlite::UniqueSqlite(const std::string& path): std::unique_ptr<sqlite3, decltype(&sqlite3_close)>(nullptr, &sqlite3_close) {
+	UniqueSqlite::UniqueSqlite(const std::string& path): ptr(nullptr, &sqlite3_close) {
 		sqlite3* raw_db = nullptr;
 
 		int rc = sqlite3_open(path.c_str(), &raw_db);
@@ -15,14 +15,15 @@ namespace database {
 			throw runtime_error("loading sqlite database failed");
 		}
 		if (rc != SQLITE_OK) {
-			free(raw_db);
-			throw runtime_error(sqlite3_errmsg(raw_db));
+			string err = sqlite3_errmsg(raw_db);
+			sqlite3_close(raw_db);
+			throw runtime_error(err);
 		}
 
 		reset(raw_db);
 		assert(get() != nullptr);
 	}
-	
+
 	void UniqueSqlite::exec(std::string code, int (*callback)(void *, int, char **, char **), void* data) {
 		char* err;
 		sqlite3_exec(get(), code.c_str(), callback, data, &err);
@@ -44,7 +45,7 @@ namespace database {
 
 		//throw when sql err
 		if (rc != SQLITE_OK) {
-			free(new_stmt);
+			sqlite3_finalize(new_stmt);
 			throw runtime_error(sqlite3_errmsg(db));
 		}
 

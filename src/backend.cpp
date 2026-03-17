@@ -21,8 +21,8 @@ Backend::~Backend() {
 
 void Backend::loadTasks() {
     // Clear existing tasks
-    qDeleteAll(m_tasks);
-    m_tasks.clear();
+	QList<QObject*> old_tasks = m_tasks;
+	m_tasks.clear();
 
     // Load all tasks from the head task's children
     tasktree::Task& current = *m_current->getRef();
@@ -38,22 +38,25 @@ void Backend::loadTasks() {
 
 	// sort by creation time
 	int first_completed;
-	for (first_completed = 0; first_completed < m_tasks.size() && static_cast<TaskModel*>(m_tasks.at(first_completed))->isCompleted(); ++first_completed);
+	for (first_completed = 0; first_completed < m_tasks.size() && !static_cast<TaskModel*>(m_tasks.at(first_completed))->isCompleted(); ++first_completed);
 
 	auto creation_compare = [](QObject* a, QObject* b) -> bool {
 		return static_cast<TaskModel*>(a)->getRef()->get_creation_time() > static_cast<TaskModel*>(b)->getRef()->get_creation_time();
 	};
 
 	std::sort(m_tasks.begin(), m_tasks.begin() + first_completed, creation_compare);
+
+    qDeleteAll(old_tasks);
 }
 
 void Backend::setCurrent(TaskModel* current) {
-	delete m_current;
+	TaskModel* old_current = m_current;
 	if (m_tasks.contains(current)) current = new TaskModel(*this, current->getRef());
 	m_current = current;
 
 	refreshTasks();
 	emit currentChanged();
+	delete old_current;
 }
 
 void Backend::addTask(const QString& name) {
@@ -86,13 +89,12 @@ void Backend::setTaskName(TaskModel* task, const QString& name) {
 }
 
 void Backend::setTaskCompleted(TaskModel* task, bool completed) {
+	if (task == nullptr) return;
 	if (task->isCompleted() == completed) return;
 
 	m_tree.toggle_task_completed(*task->getRef());
 	task->m_completed = completed;
-	task->completedChanged();
 
-	assert(task->isCompleted() == task->getRef()->is_completed());
 	refreshTasks();
 }
 

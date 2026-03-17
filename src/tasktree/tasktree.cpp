@@ -95,6 +95,10 @@ namespace tasktree {
 			throw invalid_argument("cannot remove head task");
 		}
 
+		for (int i = 0; i < task.get_child_count(); ++i) {
+			remove(task.get_child(i));
+		}
+
 		UniqueSqliteStmt stmt(db.get(), "DELETE FROM tasks WHERE id = ?");
 		stmt.bind(1, task.id);
 

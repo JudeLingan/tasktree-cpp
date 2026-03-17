@@ -9,6 +9,8 @@ target_sources(Task
 			task.hpp
 )
 
+target_link_libraries(Task PRIVATE sqlite3)
+
 add_library(Tasktreelib)
 
 target_sources(Tasktreelib
@@ -22,5 +24,6 @@ target_sources(Tasktreelib
 
 target_link_libraries(Tasktreelib
 	PRIVATE Task
+	PUBLIC sqlite3
 	PUBLIC DatabaseUniqueSqlite
 )

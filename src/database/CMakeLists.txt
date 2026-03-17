@@ -10,5 +10,5 @@ target_sources(DatabaseUniqueSqlite
 )
 
 target_link_libraries(DatabaseUniqueSqlite
-	PRIVATE SQLite::SQLite3
+	PUBLIC sqlite3
 )
