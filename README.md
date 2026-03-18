@@ -1,7 +1,9 @@
 # TaskTree C++
 This repo is intended to replace my C repo, Tasktree.
-It currently has a database connection and QT Quick UI.
-An initial prototype for mobile will be available once the goals are complete.
+It currently has a SQLite database connection and QT Quick UI.
+
+# Status
+It is currently being ported to android, with IOS coming next.
 It also needs a better name because TaskTree is taken.
 
 ## What is this for?
@@ -13,6 +15,7 @@ When in this subui, there will be a title with the name of the task that is curr
 This ui is going to change to be more intuitive in a future update.
 
 ## Initial Goals
+- [ ] get play store and app store betas
 - [X] sort by creation date
 - [X] sort completed to bottom
 - [X] subtasks of subtasks of subtasks!
