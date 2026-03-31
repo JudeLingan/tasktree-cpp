@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 		QQmlApplicationEngine engine;
 
 		engine.rootContext()->setContextProperty("backend", &backend);
-		engine.loadFromModule("TasktreeUI", "Main");
+		engine.loadFromModule("ui", "Main");
 
 		if (engine.rootObjects().isEmpty())
 			return -1;
