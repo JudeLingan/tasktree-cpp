@@ -46,3 +46,5 @@ target_link_libraries(
 
 include(GoogleTest)
 gtest_discover_tests(tests)
+
+add_subdirectory(test)
