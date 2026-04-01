@@ -14,7 +14,7 @@ namespace tasktree {
 			Task head = Task();
 			database::UniqueSqlite db;
 			std::unordered_map<std::string, sqlite3_int64> column_ids = {}; //contains pairs of columns and int ids
-			std::vector<std::string> column_names = {"id", "parent", "name", "creation time", "completed"}; //
+			std::vector<std::string> column_names = {"id", "parent", "name", "creation_time", "completed"}; //
 
 			// --- tree functions ---
 
@@ -30,7 +30,6 @@ namespace tasktree {
 			std::vector<std::string> get_column_names() const noexcept;
 
 		public:
-
 			// --- public interface ---
 
 			//initialize tasktree and load database at path
@@ -38,6 +37,9 @@ namespace tasktree {
 
 			//get head task
 			Task& get_head() noexcept { return head; }
+
+			//get database
+			sqlite3* get_db() { return db.get(); }
 
 			//add child with name to parent, updating db
 			Task& add_child(Task& parent, const std::string& name);
@@ -57,5 +59,6 @@ namespace tasktree {
 			//get first task loaded into memory with this id
 			//returns null if not found
 			Task* get_by_id(sqlite3_int64 id);
+
 	};
 }
